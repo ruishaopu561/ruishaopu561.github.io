@@ -1,0 +1,11 @@
+# .DS_Store
+# Thumbs.db
+# db.json
+# *.log
+node_modules/
+# scaffolds/
+# source/
+themes/landscape
+.deploy_git/
+# package.json
+# package-lock.json
