@@ -101,4 +101,4 @@ deploy:
   type: git
   repo: https://github.com/ruishaopu561/ruishaopu561.github.io # https://bitbucket.org/JohnSmith/johnsmith.bitbucket.io
   branch: master
-  message: update blog again, maybe something useful
+  message: upload database content part2
