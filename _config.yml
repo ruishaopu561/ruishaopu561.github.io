@@ -101,4 +101,4 @@ deploy:
   type: git
   repo: https://github.com/ruishaopu561/ruishaopu561.github.io # https://bitbucket.org/JohnSmith/johnsmith.bitbucket.io
   branch: master
-  message: upload database content part2
+  message: 更新数据库部分，暂时更完这块，等待后续修改补充...
