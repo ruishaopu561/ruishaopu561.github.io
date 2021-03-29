@@ -1,5 +1,6 @@
 ---
 title: Hello World
+date: 2020-06-12 16:46:15
 top_img: /img/cover/helloworld.png
 cover: /img/cover/helloworld.png
 ---
