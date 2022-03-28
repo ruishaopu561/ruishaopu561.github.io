@@ -101,4 +101,4 @@ deploy:
   type: git
   repo: https://github.com/ruishaopu561/ruishaopu561.github.io # https://bitbucket.org/JohnSmith/johnsmith.bitbucket.io
   branch: master
-  message: 更新Java虚拟机内存管理相关
+  message: 更新Java类文件与加载相关
