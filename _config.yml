@@ -101,4 +101,4 @@ deploy:
   type: git
   repo: https://github.com/ruishaopu561/ruishaopu561.github.io # https://bitbucket.org/JohnSmith/johnsmith.bitbucket.io
   branch: master
-  message: 更新java线程池与并发工具相关
+  message: 更新MyBatis主要内容概述
