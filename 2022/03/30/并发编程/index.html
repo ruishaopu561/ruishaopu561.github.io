@@ -1,0 +1,188 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>并发编程 | Shaopu Rui</title><meta name="description" content="前言疫情期间看完了《Java并发编程实战》一书，看完之后觉得有些囫囵吞枣，没有留下深刻印象，因此写点小小总结，把握一下重点知识，尽量形成认知框架中的一部分。 原书的内容十分详细，也肯定写得比我好。我这里只做简单的概括，详细的还是去书里看比较好。 并发编程Java并发编程的核心目的是识别出任务中必须串行和可以并行的部分，将可以并行的部分尽量交给多线程并行处理，高效利用多处理器，以提高程序整体的性能。"><meta name="keywords" content="笔记,Java"><meta name="author" content="Shaopu Rui"><meta name="copyright" content="Shaopu Rui"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.png"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="dns-prefetch" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="crossorigin"/><link rel="dns-prefetch" href="https://fonts.googleapis.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="dns-prefetch" href="//busuanzi.ibruce.info"/><meta name="twitter:card" content="summary"><meta name="twitter:title" content="并发编程"><meta name="twitter:description" content="前言疫情期间看完了《Java并发编程实战》一书，看完之后觉得有些囫囵吞枣，没有留下深刻印象，因此写点小小总结，把握一下重点知识，尽量形成认知框架中的一部分。 原书的内容十分详细，也肯定写得比我好。我这里只做简单的概括，详细的还是去书里看比较好。 并发编程Java并发编程的核心目的是识别出任务中必须串行和可以并行的部分，将可以并行的部分尽量交给多线程并行处理，高效利用多处理器，以提高程序整体的性能。"><meta name="twitter:image" content="http://ruishaopu561.github.io/img/cover/thread_lifecycle.jpg"><meta property="og:type" content="article"><meta property="og:title" content="并发编程"><meta property="og:url" content="http://ruishaopu561.github.io/2022/03/30/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"><meta property="og:site_name" content="Shaopu Rui"><meta property="og:description" content="前言疫情期间看完了《Java并发编程实战》一书，看完之后觉得有些囫囵吞枣，没有留下深刻印象，因此写点小小总结，把握一下重点知识，尽量形成认知框架中的一部分。 原书的内容十分详细，也肯定写得比我好。我这里只做简单的概括，详细的还是去书里看比较好。 并发编程Java并发编程的核心目的是识别出任务中必须串行和可以并行的部分，将可以并行的部分尽量交给多线程并行处理，高效利用多处理器，以提高程序整体的性能。"><meta property="og:image" content="http://ruishaopu561.github.io/img/cover/thread_lifecycle.jpg"><meta property="article:published_time" content="2022-03-30T04:36:02.000Z"><meta property="article:modified_time" content="2022-09-21T07:30:46.940Z"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>var autoChangeMode = '1'
+var t = Cookies.get("theme")
+if (autoChangeMode == '1'){
+  var isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+  var isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+  var isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined){
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport){
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour < 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+  }
+  } else if (t == 'light') activateLightMode()
+  else activateDarkMode()
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="http://ruishaopu561.github.io/2022/03/30/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"><link rel="prev" title="线程池与并发工具" href="http://ruishaopu561.github.io/2022/03/31/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E4%B8%8E%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7/"><link rel="next" title="内存模型与线程" href="http://ruishaopu561.github.io/2022/03/29/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://ruishaopu561.github.io","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  bookmark: {
+    message_prev: 'Press',
+    message_next: 'to bookmark this page'
+  },
+  runtime_unit: 'days',
+  runtime: true,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  highlightShrink: 'false',
+  isFontAwesomeV5: false,
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+  
+}</script><script>var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isSidebar: true  
+  }</script><noscript><style>
+#page-header {
+  opacity: 1
+}
+.justified-gallery img{
+  opacity: 1
+}
+</style></noscript><meta name="generator" content="Hexo 4.2.1"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">24</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">11</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> List</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div></div></div><i class="fa fa-arrow-right on" id="toggle-sidebar" aria-hidden="true">     </i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#并发编程"><span class="toc-number"></span> <span class="toc-text">并发编程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#线程安全性"><span class="toc-number">1.</span> <span class="toc-text">线程安全性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程活跃性"><span class="toc-number">2.</span> <span class="toc-text">线程活跃性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#死锁："><span class="toc-number">2.1.</span> <span class="toc-text">死锁：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程性能"><span class="toc-number">3.</span> <span class="toc-text">线程性能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol></div></div></div><div id="body-wrap"><div class="post-bg" id="nav" style="background-image: url(/img/cover/thread_lifecycle.jpg)"><div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">Shaopu Rui</a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> List</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div><span class="toggle-menu close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span></span></div><div id="post-info"><div id="post-title"><div class="posttitle">并发编程</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="Created 2022-03-30 12:36:02"><i class="fa fa-calendar" aria-hidden="true"></i> Created 2022-03-30</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="Updated 2022-09-21 15:30:46"><i class="fa fa-history" aria-hidden="true"></i> Updated 2022-09-21</span></time></div><div class="meta-secondline"> </div><div class="meta-thirdline"><span class="post-meta-pv-cv"><i class="fa fa-eye post-meta__icon" aria-hidden="true"> </i><span>Post View:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"></span></div></div></div></div><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>疫情期间看完了《Java并发编程实战》一书，看完之后觉得有些囫囵吞枣，没有留下深刻印象，因此写点小小总结，把握一下重点知识，尽量形成认知框架中的一部分。</p>
+<p>原书的内容十分详细，也肯定写得比我好。我这里只做简单的概括，详细的还是去书里看比较好。</p>
+<h1 id="并发编程"><a href="#并发编程" class="headerlink" title="并发编程"></a>并发编程</h1><p>Java并发编程的核心目的是识别出任务中必须串行和可以并行的部分，将可以并行的部分尽量交给多线程并行处理，高效利用多处理器，以提高程序整体的性能。同时，由于多线程并行会引起线程安全性、活跃性和性能等多方面的问题，如何规避这些问题同样十分重要。</p>
+<p>多线程带来的风险：</p>
+<ul>
+<li><strong>安全性问题</strong>：多线程的操作执行顺序不可预测，甚至会产生奇怪的结果，在没有充足同步的情况下，线程安全无法保证。解决线程安全性问题，则需要保证“<strong>永远不会发生糟糕的事情</strong>”</li>
+<li><strong>活跃性问题</strong>：“<strong>某件正确的事情最终会发生</strong>”，这也是由于多线程竞争和轮序执行会导致的问题。例如，线程A错误的无限循环可能导致线程B无法被执行。<ul>
+<li>常见问题：死锁、饥饿、活锁</li>
+</ul>
+</li>
+<li><strong>性能问题</strong>：希望“<strong>正确的事情尽快发生</strong>”，解决活跃性问题并不能保证程序的性能<ul>
+<li>常见问题：服务时间过长、响应不灵敏等</li>
+</ul>
+</li>
+</ul>
+<h2 id="线程安全性"><a href="#线程安全性" class="headerlink" title="线程安全性"></a>线程安全性</h2><p><strong>线程安全性</strong>：当多个线程访问某个类时，不管运行环境采用何种调度方式或者这些线程将如何交替执行，并且在主调代码中不需要任何额外的同步和协同，这个类都能表现出正确的行为，那么就称这个类是线程安全的</p>
+<p>为了维护线程安全性，主要有2种思路：</p>
+<ol>
+<li>避免对象发布，将对象实现为线程内部的变量，让其他线程无法访问，例如<code>private</code>修饰的变量，<code>ThreadLocal</code>修饰的变量<ul>
+<li>适用于本身就无需于其他线程共享的变量，此时仅需要做好变量的管理，避免逸出</li>
+</ul>
+</li>
+<li>通过加锁、原子性变量、同步容器实现对象的安全发布<ul>
+<li>适用于必然共享的变量，在发布之前确保其安全性</li>
+</ul>
+</li>
+</ol>
+<h2 id="线程活跃性"><a href="#线程活跃性" class="headerlink" title="线程活跃性"></a>线程活跃性</h2><p>导致线程活跃性问题的一般情况有死锁、饥饿、糟糕的响应性、活锁等</p>
+<ul>
+<li><strong>饥饿</strong>：当线程无法访问它所需要的资源而不能继续执行时，就导致饥饿，最常见的资源就是<strong>时钟周期</strong><ul>
+<li>线程调度与线程优先级有关，操作系统会尽力去平衡</li>
+</ul>
+</li>
+<li><strong>糟糕的响应性</strong>：线程的长时间执行导致其他线程无法执行，导致其响应时间过长</li>
+<li><strong>活锁</strong>：线程不会被阻塞，但也没法继续执行，因为会一直重复执行相同的操作（比如重复尝试拿锁）<ul>
+<li>解决：在重试机制中引入随机性，以避免重复多次的竞争失败（只要每次有人成功，就能执行下去）</li>
+</ul>
+</li>
+</ul>
+<h3 id="死锁："><a href="#死锁：" class="headerlink" title="死锁："></a>死锁：</h3><ul>
+<li>锁顺序死锁：线程拿锁的顺序不同，导致握有对方需要的锁同时需要对方握有的资源，引起死锁<ul>
+<li>解决：对加锁行为进行全局分析，制定拿锁的顺序</li>
+</ul>
+</li>
+<li>动态的锁顺序死锁：以<code>transferMOney(Account fromAccount, Account toAccount)</code>为例，看似拿锁顺序固定，但由于业务多变，传参时仍可能出现顺序死锁的可能性<ul>
+<li>解决：对每个<code>Account</code>进行哈希，得到固定的大小顺序；若哈希值相同，则可以使用<code>Tie-Breaking</code>锁</li>
+</ul>
+</li>
+<li>在协作对象之间发生的死锁：协作对象的方法都有加锁，在某个方法调用其他对象的加锁方法，就会出现顺序死锁的问题，但其十分隐晦<ul>
+<li>如果在持有锁的情况下调用某个外部方法，就需要小心死锁</li>
+<li>解决：开放调用，缩小锁的粒度，不在方法级实现加锁，而在关键变量访问的地方加锁即可</li>
+</ul>
+</li>
+<li>资源死锁：举例：线程A持有与数据库D1的连接，并等待与数据库D2的连接；线程B持有与数据库D2的连接，并等待与数据库D1的连接</li>
+</ul>
+<p>死锁的判断：</p>
+<ol>
+<li>两阶段策略：找出需要获取的锁，对这些实例进行分析，确保拿锁顺序的一致性</li>
+<li>支持定时的锁：用显式锁<code>Lock</code>代替内置锁，<code>Lock</code>有<code>tryLock</code>功能，还可以设置超时时间<code>Timeout</code></li>
+<li>通过线程转储信息来分析死锁</li>
+</ol>
+<h2 id="线程性能"><a href="#线程性能" class="headerlink" title="线程性能"></a>线程性能</h2><p>根据Amdahl定律，在包含<code>N</code>个处理器的机器中，最高加速比为：$Speedup \leq \frac{1}{F+\frac{(1-F)}{N}}$，当<code>N</code>趋于无穷大时，最大加速比仅为 $\frac{1}{F}$</p>
+<p>公式说明，引入并行确实可以加速程序运行，但即便处理器数量真的无限，并行的部分也是有限的，且引入并行的过程中（如创建线程的过程）也会增加新的串行部分</p>
+<ul>
+<li>线程引入的开销<ul>
+<li><strong>上下文切换</strong>：线程调度过程中需要访问由操作系统和JVM共享的数据结构，且它们和用户线程使用同一组CPU，新线程创建时可能会有缓存缺失等等。这些都是上下文切换带来的开销</li>
+<li><strong>内存同步</strong>：根据Java内存模型可知，为了保持多个线程共享的变量的一致性，对变量的读写都需要更新到主内存中，这在一定程度上降低了线程性能</li>
+<li><strong>阻塞</strong>：当线程由于竞争锁失败或I/O操作等原因阻塞时，可以通过自旋等待或直接挂起的方式处理，具体选择取决于上下文切换的开销等。</li>
+</ul>
+</li>
+</ul>
+<p><strong>串行操作会降低可伸缩性</strong>（即程序在多处理器下的性能增加程度），并且<strong>上下文切换会降低程序性能</strong>，而在锁上发生竞争时会同时导致这两种问题。如何减少锁的竞争：</p>
+<ul>
+<li>缩小锁的范围：将锁无关的代码移出同步代码块，实现“快进快出”</li>
+<li>减小锁的粒度：降低锁的请求频率，减小竞争发生的可能性</li>
+<li>锁分段</li>
+<li>避免热点域</li>
+<li>替代独占锁：并发容器、读写锁、不可变对象、原子变量</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>原本打算把每个关键字和工具都记录一下的，正好看到了别人的记录，觉得挺好的，分享一下<br><a href="https://github.com/CL0610/Java-concurrency" target="_blank" rel="noopener">Java并发编程相关</a></p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Shaopu Rui</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://ruishaopu561.github.io/2022/03/30/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">http://ruishaopu561.github.io/2022/03/30/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/">笔记</a><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post_share"><div class="social-share" data-image="/img/mybatis/cache.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2022/03/31/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E4%B8%8E%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7/"><img class="prev_cover" src="/img/cover/thread_pool.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">线程池与并发工具</div></div></a></div><div class="next-post pull_right"><a href="/2022/03/29/%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/"><img class="next_cover" src="/img/cover/memory_model.png" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">内存模型与线程</div></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> Recommend</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2022/03/29/内存模型与线程/" title="内存模型与线程"><img class="relatedPosts_cover" src="/img/cover/memory_model.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2022-03-29</div><div class="relatedPosts_title">内存模型与线程</div></div></a></div><div class="relatedPosts_item"><a href="/2022/03/28/虚拟机执行/" title="虚拟机执行"><img class="relatedPosts_cover" src="/img/cover/java_class.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2022-03-28</div><div class="relatedPosts_title">虚拟机执行</div></div></a></div><div class="relatedPosts_item"><a href="/2022/03/27/自动内存管理/" title="自动内存管理"><img class="relatedPosts_cover" src="/img/cover/java_memory.webp"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2022-03-27</div><div class="relatedPosts_title">自动内存管理</div></div></a></div><div class="relatedPosts_item"><a href="/2022/03/31/线程池与并发工具/" title="线程池与并发工具"><img class="relatedPosts_cover" src="/img/cover/thread_pool.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2022-03-31</div><div class="relatedPosts_title">线程池与并发工具</div></div></a></div><div class="relatedPosts_item"><a href="/2022/03/29/方法调用/" title="方法调用"><img class="relatedPosts_cover" src="/img/cover/method_invoke.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2022-03-29</div><div class="relatedPosts_title">方法调用</div></div></a></div><div class="relatedPosts_item"><a href="/2022/09/25/MyBatis-2/" title="MyBatis-2"><img class="relatedPosts_cover" src="/img/mybatis/cache.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2022-09-25</div><div class="relatedPosts_title">MyBatis-2</div></div></a></div></div><div class="clear_both"></div></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By Shaopu Rui</div><div class="framework-info"><span>Driven </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="Read Mode"></i><i class="fa fa-plus" id="font_plus" title="Increase font size"></i><i class="fa fa-minus" id="font_minus" title="Decrease font size"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="Traditional Chinese and Simplified Chinese Conversion" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="Dark Mode"></i></div><div id="rightside-config-show"><div id="rightside_config" title="Setting"><i class="fa fa-cog" aria-hidden="true"></i></div><i class="fa fa-list-ul close" id="mobile-toc-button" title="Table of Contents" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="Back to top" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  CommonHTML: {
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "HTML-CSS": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "SVG": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  }
+});
+</script><script type="text/x-mathjax-config">MathJax.Hub.Queue(function() {
+  var all = MathJax.Hub.getAllJax(), i;
+  for (i=0; i < all.length; i += 1) {
+    all[i].SourceElement().parentNode.className += ' has-jax';
+  }
+});
+</script><script src="https://cdn.jsdelivr.net/npm/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@3/instantpage.min.js" type="module"></script></body></html>
