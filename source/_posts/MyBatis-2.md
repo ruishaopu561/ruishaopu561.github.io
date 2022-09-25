@@ -1,8 +1,8 @@
 ---
 title: MyBatis-2
 date: 2022-09-25 14:14:40
-top_img: /img/cover/mybatis.jpeg
-cover: /img/cover/mybatis.jpeg
+top_img: /img/mybatis/cache.jpg
+cover: /img/mybatis/cache.jpg
 tags: [MyBatis, 笔记]
 ---
 

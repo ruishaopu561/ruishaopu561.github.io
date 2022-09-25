@@ -1,8 +1,8 @@
 ---
 title: MyBatis-3
 date: 2022-09-25 15:57:09
-top_img: /img/cover/mybatis.jpeg
-cover: /img/cover/mybatis.jpeg
+top_img: /img/mybatis/drivers.png
+cover: /img/mybatis/drivers.png
 tags: [MyBatis, 笔记]
 ---
 
