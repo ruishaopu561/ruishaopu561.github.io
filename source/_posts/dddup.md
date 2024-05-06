@@ -1,8 +1,8 @@
 ---
 title: 领域驱动设计统一过程
 date: 2024-05-05 20:28:39
-top_img: /img/cover/mybatis.jpeg
-cover: /img/cover/mybatis.jpeg
+top_img: /img/cover/ddd.png
+cover: /img/cover/ddd.png
 tags: [DDDUP, 领域驱动设计统一过程, 笔记]
 ---
 
